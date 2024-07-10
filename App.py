@@ -3,9 +3,9 @@ import pandas as pd
 import numpy as np
 
 # Charger les données depuis les fichiers Excel
-data = pd.read_excel("D:\\Programe\\Data\\")
-mixte_voix = pd.read_excel("D:\\Programe\\Data\\")
-pending = pd.read_excel("D:\\Programe\\Data\\")
+data = pd.read_excel("D:\\Programe\\Verification Pending AirTime\\Data\\souscriptions_forfaits_data_08-09_07_2024.xlsx")
+mixte_voix = pd.read_excel("D:\\Programe\\Verification Pending AirTime\\Data\\souscriptions_forfaits_mixte&voix_08-09_07_2024.xlsx")
+pending = pd.read_excel("D:\\Programe\\Verification Pending AirTime\\Data\\PENDING_TXN_REPORT_09-07-2024.xlsx")
 
 # Fusionner les fichiers 'data' et 'mixte_voix' en une seule DataFrame
 file_succes = pd.concat([data, mixte_voix])
@@ -121,10 +121,10 @@ airtime_pending['SUCCES_FRMSISDN'] = airtime_pending.apply(frmsisdn_succes, axis
 print(airtime_pending[['REFERENCEID','ACTION','FRMSISDN','AMOUNT','TIMESTAMP','SUCCES_FRMSISDN','SUCCES_AMOUNT','SUCCES_TIMESTAMP']])
 
 # Sélectionner les colonnes finales à inclure dans le fichier de sortie
-airtime_pending = airtime_pending[['REFERENCEID','ACTION','FRMSISDN','AMOUNT','TIMESTAMP']]
+airtime_pending = airtime_pending[['REFERENCEID','ACTION','FRMSISDN','AMOUNT','TIMESTAMP','SUCCES_FRMSISDN','SUCCES_AMOUNT','SUCCES_TIMESTAMP']]
 
 # Sauvegarder les résultats dans un fichier Excel en ajustant les options d'affichage pour éviter la notation exponentielle
-output_file = "D:\\Programe\\airtime_pending_with_action.xlsx"
+output_file = "D:\\Programe\\Verification Pending AirTime\\airtime_pending_with_action.xlsx"
 with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     airtime_pending.to_excel(writer, index=False)
     # Récupérer le workbook et la feuille
@@ -138,5 +138,21 @@ with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     for col_num, value in enumerate(airtime_pending.columns.values):
         worksheet.set_column(col_num, col_num, None, format_num)
 
+output_file_sucess = "D:\\Programe\\Verification Pending AirTime\\Succes_Trnxs.xlsx"
+with pd.ExcelWriter(output_file_sucess, engine='xlsxwriter') as writer:
+    file_succes.to_excel(writer, index=False)
+    # Récupérer le workbook et la feuille
+    workbook = writer.book
+    worksheet = writer.sheets['Sheet1']  # Nom de la feuille peut être différent
+
+    # Définir le format pour les colonnes numériques pour éviter la notation exponentielle
+    format_num = workbook.add_format({'num_format': '0'})
+
+    # Appliquer le format à toutes les colonnes
+    for col_num, value in enumerate(file_succes.columns.values):
+        worksheet.set_column(col_num, col_num, None, format_num)
+
 # Confirmation de la sauvegarde des résultats
-print(f"Résultats sauvegardés dans {output_file}")
+print(f"Résultats des airtime_pending_with_action sauvegardés dans {output_file}")
+
+print(f"Résultats des Succes_Trnxs sauvegardés dans {output_file_sucess}")
