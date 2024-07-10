@@ -19,7 +19,7 @@ airtime_pending = pending[pending['TYPE'].isin(options)]
 airtime_pending = airtime_pending[['REFERENCEID', 'TYPE', 'FRMSISDN', 'AMOUNT', 'TIMESTAMP']]
 
 # Fonction pour convertir et formater la date au format souhaité
-def convert_format_date_pending(dte):
+def convert_format_date_pending(dte): 
     date_obj = datetime.strptime(dte, '%Y-%m-%d %H:%M:%S.%f')  # Convertir la chaîne de caractères en objet datetime
     formatted_date = date_obj.strftime('%d/%m/%Y %H:%M:%S')  # Formater la date
     return formatted_date
